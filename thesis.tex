@@ -1,0 +1,40 @@
+%% It is just an empty TeX file.
+%% Write your code here.
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsfonts, amsmath, amssymb}
+\usepackage[none]{hyphenat}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[L]{\slshape \MakeUppercase[Place Title Here]}
+
+\begin{document}
+
+\section{Introdution}
+As we know, people mostly get information and knowledge from news and articles. In this era, people are also used to using internet doing everything. So it’s no doubt that online news and articles are playing a very important role in our daily life. We can get any news we want through internet quickly. And also, it’s much easier to figure out which online news or articles we like through many internet ways, such like shares, likes and comments.  
+
+As we can imagine, popular news can make the authors become famous, also it can help the social media company attract more people. So they can make more profits. So if an author can know what can make news or articles become popular, or one company can predict whether news or articles will be popular before them are published, they will definitely try their best to get the information.  
+
+So this project aims to find an method to predict how popular an online article can be before it is published by using several statistic characteristics summarized from it. We use the dataset from UCI Machine Learning Repository. In this dataset, it uses the number of shares for an online article to measure how popular it is.   
+
+The input of algorithm is several features of Mashable articles: Words(e.g. number of words in the title), Links(e.g. number of Mashable article links), Digital Media(e.g. number of images), Time(e.g. day of the week), Keywords(e.g. number of keywords) and Natural Language Processing(e.g. closeness to top 5 LDA topics). We will predict the popularity in two perspectives. Firstly, we can use regression models(e.g. regression, GAM, Lasso) to predict the number of shares. Secondly, we make articles into 3 levels (unpopular, normal, popular) and then use classification algorithm(e.g. SVM, Random Forest, KNN) to find the articles level.  
+
+\section{Method}
+\subsection{Linear models}  
+Linear models has been developed in age before computer came out, but we still study and use them a lot. If we have an input vector $X^T=(X_1,X_2,...,X_p)$, and want to predict a output Y. The linear regression model has the form $$Y=\beta_0+\sum_{j=1}^{p} X_j\beta_j$$
+The linear model has one of assumptions. The regression function E(Y|X) is linear or it's reasonable to approximate it into linear model. In this formula, $\beta_j$s are unknown parameters, and variables $X_j$ can be in different sources.
+
+\subsection{Generalized Additive Models(GAM)}  
+Linear models are good, but as the effects are often not linear in the real world, linear models often fail. We can use some more flexible statistical methods that can show nonlinear effects. We call these methods "generalized additive models". If we have an input vector $X^T=(X_1,X_2,...,X_p)$, and want to predict a output Y. The additive model has the form $$Y=\alpha+\sum_{j=1}^{p} f_j(X_j)+\epsilon$$
+Where the mean of error term $\epsilon$ is 0. As each $f_j$ is an unspecified smooth nonparametric function. The approach is using an algorithm for simultaneously estimating all functions instead of expanding each function then fitted by simple least squares. Given observation $x_i$, $y_i$, the criterion is like: $$\sum_{i=1}^{N} (y_i-\alpha-\sum_{j=1}^{p}f_j(X_{ij}))^2+\sum_{j=1}^{p} \lambda_jf_j(X_{ij})$$
+
+\subsection{Least Absolute Selection and Shrinkage Operator(lasso)}  
+Lasso is another method for estimation in linear models. It solves the problem $$\min_{\beta} \sum_{i=1}^{n} (y_i-\sum_{j=1}^{p} x_{ij}\beta_{ij})^2
+Linear models are good, but as the effects are often not linear in the real world, linear models often fail. We can use some more flexible statistical methods that can show nonlinear effects. We call these methods "generalized additive models". If we have an input vector $X^T=(X_1,X_2,...,X_p)$, and want to predict a output Y. The additive model has the form $$Y=\alpha+\sum_{j=1}^{p} f_j(X_j)+\epsilon$$
+Where the mean of error term $\epsilon$ is 0. As each $f_j$ is an unspecified smooth nonparametric function. The approach is using an algorithm for simultaneously estimating all functions instead of expanding each function then fitted by simple least squares. Given observation $x_i$, $y_i$, the criterion is like: $$\sum_{i=1}^{N} (y_i-\alpha-\sum_{j=1}^{p}f_j(X_{ij}))^2+\sum_{j=1}^{p} \lambda_jf_j(X_{ij})$$
+
+\end{document}
