@@ -12,6 +12,9 @@
 \fancyfoot{}
 \fancyhead[L]{\slshape \MakeUppercase[Place Title Here]}
 
+\DeclareMathOperator*{\argminA}{arg\,min} % Jan Hlavacek
+\DeclareMathOperator*{\argminB}{argmin}   % Jan Hlavacek
+
 \begin{document}
 
 \section{Introdution}
@@ -33,8 +36,11 @@ Linear models are good, but as the effects are often not linear in the real worl
 Where the mean of error term $\epsilon$ is 0. As each $f_j$ is an unspecified smooth nonparametric function. The approach is using an algorithm for simultaneously estimating all functions instead of expanding each function then fitted by simple least squares. Given observation $x_i$, $y_i$, the criterion is like: $$\sum_{i=1}^{N} (y_i-\alpha-\sum_{j=1}^{p}f_j(X_{ij}))^2+\sum_{j=1}^{p} \lambda_jf_j(X_{ij})$$
 
 \subsection{Least Absolute Selection and Shrinkage Operator(lasso)}  
-Lasso is another method for estimation in linear models. It solves the problem $$\min_{\beta} \sum_{i=1}^{n} (y_i-\sum_{j=1}^{p} x_{ij}\beta_{ij})^2
-Linear models are good, but as the effects are often not linear in the real world, linear models often fail. We can use some more flexible statistical methods that can show nonlinear effects. We call these methods "generalized additive models". If we have an input vector $X^T=(X_1,X_2,...,X_p)$, and want to predict a output Y. The additive model has the form $$Y=\alpha+\sum_{j=1}^{p} f_j(X_j)+\epsilon$$
-Where the mean of error term $\epsilon$ is 0. As each $f_j$ is an unspecified smooth nonparametric function. The approach is using an algorithm for simultaneously estimating all functions instead of expanding each function then fitted by simple least squares. Given observation $x_i$, $y_i$, the criterion is like: $$\sum_{i=1}^{N} (y_i-\alpha-\sum_{j=1}^{p}f_j(X_{ij}))^2+\sum_{j=1}^{p} \lambda_jf_j(X_{ij})$$
+Lasso is another method for estimation in linear models. It solves the problem $$\min_{\beta} \sum_{i=1}^{n} (y_i-\sum_{j=1}^{p} x_{ij}\beta_{ij})^2 \text{, subject to } \sum_{j=1}^{p} \lvert \beta_j \rvert \leq t$$
+Where t $\geq$ 0 is a parameter given by users. It controls the amount of shrinkage that is applied to the estimates. For the full least squares estimates $\hat{\beta}^0_j$, we can get $t_0=\sum_{j=1}^{p} \lvert \hat{\beta}^0_j \rvert$. $\forall t \leq t_0$ some $\beta_j$ will go to 0. We can also write as $$\hat\beta^{lasso}=\argminB_{\beta \in \mathbb{R}^p} \lVert y-X\beta\rVert^2_2+\lambda\lVert \beta \rVert_1$$
+Where $\lambda=0$ gives ordinary least squares, $\lambda\to\infty$ gives $\hat\beta^{lasso}\to0$. 
+
+\subsection{Generalized Additive Models(SVM)}  
+
 
 \end{document}
