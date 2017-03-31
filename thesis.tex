@@ -40,7 +40,23 @@ Lasso is another method for estimation in linear models. It solves the problem $
 Where t $\geq$ 0 is a parameter given by users. It controls the amount of shrinkage that is applied to the estimates. For the full least squares estimates $\hat{\beta}^0_j$, we can get $t_0=\sum_{j=1}^{p} \lvert \hat{\beta}^0_j \rvert$. $\forall t \leq t_0$ some $\beta_j$ will go to 0. We can also write as $$\hat\beta^{lasso}=\argminB_{\beta \in \mathbb{R}^p} \lVert y-X\beta\rVert^2_2+\lambda\lVert \beta \rVert_1$$
 Where $\lambda=0$ gives ordinary least squares, $\lambda\to\infty$ gives $\hat\beta^{lasso}\to0$. 
 
-\subsection{Generalized Additive Models(SVM)}  
+\subsection{Support Vector Machines(SVM)}  
+Besides the regression models, we can also classification algorithm to describe the result. Support Vector Machines are technique for constructing an optimal separating hyperplane between two classes. We can define SVM model as:$$\text{max }L(\alpha)=\sum_{i=1}^{n} \alpha_i - \frac{1}{2}\sum_{i=1}^{n}\sum_{i'=1}^{n}\alpha_i \alpha_i' y_i y_{i'} K(x_i,x_{i'})$$
+    \begin{align}
+        &s.t.  &0=\sum_{i=1}^{n} \alpha_iy_i \nonumber \\
+        &      &0 \leq \alpha_i \leq C \nonumber
+    \end{align}
+Where the $K(x_i,x_{i'})$ is the kernel function. For this dateset, I try to use linear kernel and radial kernel.
+    \begin{align}
+        &\text{linear kernel}  &K(x_i,x_{i'})=<x_i,x_{i'}> \nonumber \\
+        &\text{radial kernel}  &K(x_i,x_{i'})=exp(-\gamma \lVert x_i-x_{i'} \rVert^2) \nonumber
+    \end{align}
+For a multiclass classification, if we have K classes total, we can build K(K-1)/2 decision boundaries to decide one point should be put in which class.
 
+\subsection{Random Forest} 
+Random Forest is imporved from bagging. In bagging, we build a number of decision trees on bootstrapped training samples from the orginal dataset, and get the final prediction by using the most frequent class of all trees. But for growing the tree from the bootstrapped data, we select m variables at random from the p variables, instead of using all p variables to pick the best variables/split-point. With this idea, we can reduce the variance compared with bagging, by reducing the correlation between the trees.
+
+\subsection{K-Nearest Neighbors(KNN)} 
+This idea can be used both in regression and classification. The main thought is we try to estimate the result of x using the k points which are nearest to the x. For this dataset, we use Euclidean distance, and only use the most frequent class from k point to estimate the class of x.
 
 \end{document}
