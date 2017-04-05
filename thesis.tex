@@ -6,6 +6,7 @@
 \usepackage{amsfonts, amsmath, amssymb}
 \usepackage[none]{hyphenat}
 \usepackage{fancyhdr}
+\usepackage{graphicx}
 
 \pagestyle{fancy}
 \fancyhead{}
@@ -18,10 +19,8 @@
 \begin{document}
 
 \section{Introdution}
-As we know, people mostly get information and knowledge from news and articles. In this era, people are also used to using internet doing everything. So it’s no doubt that online news and articles are playing a very important role in our daily life. We can get any news we want through internet quickly. And also, it’s much easier to figure out which online news or articles we like through many internet ways, such like shares, likes and comments.  
-
-As we can imagine, popular news can make the authors become famous, also it can help the social media company attract more people. So they can make more profits. So if an author can know what can make news or articles become popular, or one company can predict whether news or articles will be popular before them are published, they will definitely try their best to get the information.  
-
+As we know, people mostly get information and knowledge from news and articles. In this era, people are also used to using internet doing everything. So it’s no doubt that online news and articles are playing a very important role in our daily life. We can get any news we want through internet quickly. And also, it’s much easier to figure out which online news or articles we like through many internet ways, such like shares, likes and comments. \\ 
+As we can imagine, popular news can make the authors become famous, also it can help the social media company attract more people. So they can make more profits. So if an author can know what can make news or articles become popular, or one company can predict whether news or articles will be popular before them are published, they will definitely try their best to get the information.  \\
 So this project aims to find an method to predict how popular an online article can be before it is published by using several statistic characteristics summarized from it. We use the dataset from UCI Machine Learning Repository. In this dataset, it uses the number of shares for an online article to measure how popular it is.   
 
 The input of algorithm is several features of Mashable articles: Words(e.g. number of words in the title), Links(e.g. number of Mashable article links), Digital Media(e.g. number of images), Time(e.g. day of the week), Keywords(e.g. number of keywords) and Natural Language Processing(e.g. closeness to top 5 LDA topics). We will predict the popularity in two perspectives. Firstly, we can use regression models(e.g. regression, GAM, Lasso) to predict the number of shares. Secondly, we make articles into 3 levels (unpopular, normal, popular) and then use classification algorithm(e.g. SVM, Random Forest, KNN) to find the articles level.  
@@ -29,7 +28,8 @@ The input of algorithm is several features of Mashable articles: Words(e.g. numb
 \section{Method}
 \subsection{Linear models}  
 Linear models has been developed in age before computer came out, but we still study and use them a lot. If we have an input vector $X^T=(X_1,X_2,...,X_p)$, and want to predict a output Y. The linear regression model has the form $$Y=\beta_0+\sum_{j=1}^{p} X_j\beta_j$$
-The linear model has one of assumptions. The regression function E(Y|X) is linear or it's reasonable to approximate it into linear model. In this formula, $\beta_j$s are unknown parameters, and variables $X_j$ can be in different sources.
+The linear model has one of assumptions. The regression function E(Y$\mid$X) is linear or it's reasonable to approximate it into linear model. In this formula, $\beta_j$s are unknown parameters, and variables $X_j$ can be in different sources.  
+Also, there are seveal assumptions made for this model. We always assume that E(Y$\mid$X)=f(X) is a linear function of X and the error follows $\epsilon \sim \mathcal N(0, \sigma^2I)$ and $\epsilon$ uncorrelated with X and X is full rank which implies that X^T $\text{ is nonsingular and positive definite.}$
 
 \subsection{Generalized Additive Models(GAM)}  
 Linear models are good, but as the effects are often not linear in the real world, linear models often fail. We can use some more flexible statistical methods that can show nonlinear effects. We call these methods "generalized additive models". If we have an input vector $X^T=(X_1,X_2,...,X_p)$, and want to predict a output Y. The additive model has the form $$Y=\alpha+\sum_{j=1}^{p} f_j(X_j)+\epsilon$$
@@ -58,5 +58,40 @@ Random Forest is imporved from bagging. In bagging, we build a number of decisio
 
 \subsection{K-Nearest Neighbors(KNN)} 
 This idea can be used both in regression and classification. The main thought is we try to estimate the result of x using the k points which are nearest to the x. For this dataset, we use Euclidean distance, and only use the most frequent class from k point to estimate the class of x.
+
+\section{Data Analysis}
+\subsection{Diagnostics}
+For linear model: \\
+    We don't choose a subset of feature to run the regression, as the dataset is not such large. From the fitted vs residual plot we can find that it goes well at the beginning, but as fitted value getting bigger the residuals become not so well. But we can still think the residuals are equally spreaded around a horizontal line without distinct patterns, so there is no non-linear relationships.   \\
+    
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\linewidth]{linear_fvsr.png}
+        \caption{Linear Regression Plot: Fitted vs Residuals}
+    \end{figure}  
+    
+    As we look QQ plot, it shows that the residuals are not normally distributed so well. So we should have a concern about the residuals distribuion.\\
+    
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\linewidth]{linear_qq.png}
+        \caption{Linear Regression Plot: QQ plot}
+    \end{figure}    
+    From the Scale-location plot, we can see the red line is continually going up, which suggests that the assumptions of equal variance of the residuals may not be true.  \\
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\linewidth]{linear_sl.png}
+        \caption{Linear Regression Plot: Scale-location}
+    \end{figure}
+    
+    For all variables, I calculate the vif for each of the variable, and some of their vif value are larger than 10, which shows the collinearity is significant in these variables. And we maybe can think about remove them. \\ 
+For GAM: 
+    From the method part, we know that $f_j(x_j)$ converges from $E \left[Y-\sum_{k \neq j}f_k(x_k)\mid{x_j} \right]$. We use gam model in R to fit the whole dataset, and according to model we get, we know that the number of local scoring iterations used to compute the estimates is only 9, which shows that this method converges pretty fast.
+\subsection{Result}
+\subsubsection{Regression}
+
+\section{Conclusion}
+
+\section{Appendix}
 
 \end{document}
