@@ -27,51 +27,6 @@ So this project aims to find an method to predict how popular an online article 
 
 The input of algorithm is several features of Mashable articles: Words(e.g. number of words in the title), Links(e.g. number of Mashable article links), Digital Media(e.g. number of images), Time(e.g. day of the week), Keywords(e.g. number of keywords) and Natural Language Processing(e.g. closeness to top 5 LDA topics).
 
-    \begin{table}[h]
-        \centering
-        \caption{List of variables}
-        \begin{tabular}{ l | r }
-            \hline\hline
-            Variable names & Type(\#)\\
-            \hline
-            Days between the article publication and the dataset acquisition & numeric(1) \\
-            Number of words in the title & numeric(1) \\
-            Number of words in the content & numeric(1) \\
-            Rate of unique words in the content & numeric(1) \\
-            Rate of non-stop words in the content & numeric(1) \\
-            Rate of unique non-stop words in the content & numeric(1) \\
-            Number of links & numeric(1) \\
-            Number of links to other articles published by Mashable & numeric(1) \\
-            Number of images & numeric(1) \\
-            Number of videos & numeric(1) \\
-            Average length of the words in the content & numeric(1) \\
-            Number of keywords in the metadata & numeric(1) \\
-            Number of words in the title & numeric(1) \\
-            Data channel (Lifestyle, Entertainment, Business, Social Media, Tech or World) & binary(6) \\
-            Worst keyword shares (min, avg, max) & numeric(3) \\
-            Best keyword shares (min, avg, max) & numeric(3) \\
-            Average keyword shares (min, avg, max) & numeric(3) \\
-            shares of referenced articles in Mashable (min, avg, max) & numeric(3) \\
-            Day (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday or Sunday) & binary(7) \\
-            The article published on the weekend & binary(1) \\
-            Closeness to LDA topic from 0 to 4 & numeric(5) \\
-            Text subjectivity & numeric(1) \\
-            Text sentiment polarity & numeric(1) \\
-            Rate of positive words in the content & numeric(1) \\
-            Rate of negative words in the content & numeric(1) \\
-            Rate of positive words among non-neutral tokens & numeric(1) \\
-            Rate of negative words among non-neutral tokens & numeric(1) \\
-            Polarity of positive words (min, avg, max) & numeric(3) \\
-            Polarity of negative words (min, avg, max) & numeric(3) \\
-            Title subjectivity & numeric(1) \\
-            Title polarity & numeric(1) \\
-            Absolute subjectivity level & numeric(1) \\
-            Absolute polarity level & numeric(1) \\
-            \hline\hline
-        \end{tabular}
-        \label{table:1}
-    \end{table}
-
 We will predict the popularity in two perspectives. Firstly, we can use regression models(e.g. regression, GAM, Lasso) to predict the number of shares. Secondly, we make articles into 3 levels (unpopular, normal, popular) and then use classification algorithm(e.g. SVM, Random Forest, KNN) to find the articles level.  
 
 \section{Method}
@@ -140,7 +95,13 @@ For linear model: \\
 For GAM: From the method part, we know that $f_j(x_j)$ converges from $E \left[Y-\sum_{k \neq j}f_k(x_k)\mid{x_j} \right]$. We use gam model in R to fit the whole dataset, and according to model we get, we know that the number of local scoring iterations used to compute the estimates is only 9, which shows that this method converges pretty fast.
 \subsection{Result}
 \subsubsection{Regression}
-To compare each method result, we decide to separate the whole dataset into training and testing part. We use 70\% of the data to train each model, and then use the rest one to test the error. For regression model, we compare the MSE among linear regression, lasso and GAM. \\
+To compare each method result, we decide to separate the whole dataset into training and testing part. We use 70\% of the data to train each model, and then use the rest one to test the error. For regression model, we compare the MSE among linear regression, lasso and GAM. Before training the model, we look the distribution of the number of shares, it seems like the log of number of shares follows normal distribution. So we normalize the log of number of shares and other variables by their mean and variance.\\
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\linewidth]{logy.png}
+        \caption{Histogram of log(shares) in training dataset}
+    \end{figure}
 
 For the linear regression model, we use all variables including timedelta which is not included in the orginal parper for this dataset. We gets MSE of 1.268389. \\
 
@@ -182,12 +143,6 @@ From the regression models, we can find that the MSEs are not so different from 
 \subsubsection{classification}
 As we know, most of the articles have a very normal number of shares, only a few articles have very large or small number of shares. According to the training dataset, we decide to label the number of shares into three levels (unpopular, normal and popluar) shown in Table \ref{table:Popularity}. \\
 
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.7\linewidth]{logy.png}
-        \caption{Histogram of log(shares) in training dataset}
-    \end{figure}
-
     \begin{table}[h]
         \centering
         \caption{Popularity categories}
@@ -209,7 +164,26 @@ As we know, most of the articles have a very normal number of shares, only a few
         \caption{Popularity categories}
     \end{figure}
 
-For the one vs one SVM model, we try two different kernel, linear or radial. For the linear kernel, we try C = 0.1, 1, 10, 100, 1000, and use the 10-fold cross-validation method in the training dataset to get the best value for parameter C is . And we also use the radical method and try C = 0.1, 1, 10, 100, 1000 together with $\gamma$ = 0.25, 0.5, 1, 2, 4. Then we still use the 10-fold cross-validation method to get the best C =  and $\gamma$ = . So we can get the testing accuracy for best linear is and for best radical is.
+For the one vs one SVM model, we try two different kernel, linear or radial. For the linear kernel, we try C = 0.1, 1, 10, 100, 1000, and use the 10-fold cross-validation method in the training dataset to get the best value for parameter C is . And we also use the radical method and try C = 0.1, 1, 10, 100, 1000 together with $\gamma$ = 0.25, 0.5, 1, 2, 4. Then we still use the 10-fold cross-validation method to get the best C = 0.1 and $\gamma$ = 0.25. So we can get the testing accuracy for best linear is and for best radical is 0.4429.
+
+    \begin{table}[h]
+        \centering
+        \caption{Confusion Matrix for SVM (radical kernel, C = 0.1, $\gamma$ = 0.25)}
+        \begin{tabular}{ c | c | c | c | c }
+            \hline\hline
+            {} & \multicolumn{4}{c}{Reference} \\
+            \hline
+            Predition & Unpopular & Normal & Popular & Accuracy\\
+            \hline
+            Unpopular & 0 & 0 & 0 & 0.NaN\\
+            \hline
+            Normal & 4871 & 5268 & 1754 & 0.4429\\
+            \hline
+            Popular & 0 & 0 & 0 & NaN\\
+            \hline\hline
+        \end{tabular}
+        \label{table:knn}
+    \end{table}
 
 The random forest gives the accuracy 0.4458085 with the m = 9. We can try the number of variables from 1 to 60, and build 4000 trees. This time we use the out-of-bag (OOB) error estimation instead of cross-validation error as R can give the OOB error directly. The OOB means we can leave only one data from the training dataset, and use other data to fit the random forest model, then use the error from predict the last one. We can find that when m = 9 will give the best accuracy in the training dataset. 
 
@@ -224,7 +198,7 @@ The random forest gives the accuracy 0.4458085 with the m = 9. We can try the nu
         \caption{Confusion Matrix for random forest (m = 9)}
         \begin{tabular}{ c | c | c | c | c }
             \hline\hline
-            \multicolumn{1}{l}{} & \multicolumn{4}{c}{Reference} \\
+            {} & \multicolumn{4}{c}{Reference} \\
             \hline
             Predition & Unpopular & Normal & Popular & Accuracy\\
             \hline
@@ -253,7 +227,7 @@ For KNN, we try k from 1 to 100, which means we wish to find the best number of 
         \caption{Confusion Matrix for KNN (k = 55)}
         \begin{tabular}{ c | c | c | c | c }
             \hline\hline
-            \multicolumn{1}{l}{} & \multicolumn{4}{c}{Reference} \\
+            {} & \multicolumn{4}{c}{Reference} \\
             \hline
             Predition & Unpopular & Normal & Popular & Accuracy\\
             \hline
@@ -270,7 +244,72 @@ For KNN, we try k from 1 to 100, which means we wish to find the best number of 
 The confusion matrix in Table \ref{table:knn} shows that we can predict Unpopular some how well, and Nomarl can still be predicted correct for the majority. But knn may be bad for predicting Popular ones, as it even doesn't predict one result popluar.
 
 \section{Conclusion}
-
+In this thesis, we train several regression and classification models to predict the popularity of some online articles before them are published. We use number of shares to judge the popularity of the articles. The data we use is from Mashable news service, providing from UCI Machine Learning Repository.  \\
+Over the regression models, the best result was achieved by Generalized Additive Model(GAM) with a testing mean squared error 1.225438 after the normalization for the log of number of shares. As we know, linear regression and lasso are not flexible compared with GAM, which means they are supposed to get a bigger MSE but less variance. As diagnostics we have done, it shows that the variables are more prosible having a non-linear relationship with response. So I think the non-linear model such as GAM could be a good fit for the regression model. \\
+As the classification models, the best result goes to random forest with the accuracy 0.4458085. Looking through the confusion matrix, we can find out that only random forest can give a prediction for those articles labeled by Unpopular or Popular.\\
+Overall, the work for this thesis gives a new perspective about the reason for influencing the popularity of online articles from a statistics view instead of content or article style.
+In the future work, we want to use the method that the orginal thesis gives to get more data from other online articles resources to train a better model, and also try to use more method to give a better prediction.
 \section{Appendix}
+
+    \begin{table}[h]
+        \centering
+        \caption{List of variables}
+        \begin{tabular}{ l | l }
+            \hline\hline
+            Variable names & Type(\#)\\
+            \hline
+            \multicolumn{2}{c}{Words}\\
+            \hline
+            Number of words in the title & numeric(1) \\
+            Number of words in the content & numeric(1) \\
+            Average length of the words in the content & numeric(1) \\
+            Rate of unique words in the content & numeric(1) \\
+            Rate of non-stop words in the content & numeric(1) \\
+            Rate of unique non-stop words in the content & numeric(1) \\
+            \hline
+            \multicolumn{2}{c}{Links}\\
+            \hline
+            Number of links & numeric(1) \\
+            Number of links to other articles published by Mashable & numeric(1) \\
+            Shares of referenced article links in Mashable (min, avg, max) & numeric(3) \\
+            \hline
+            \multicolumn{2}{c}{Digital Media}\\
+            \hline
+            Number of images & numeric(1) \\
+            Number of videos & numeric(1) \\
+            \hline
+            \multicolumn{2}{c}{Time}\\
+            \hline
+            Days between the article publication and the dataset acquisition & numeric(1) \\
+            Day of the week (from Monday to Sunday) & binary(7) \\
+            The article published on the weekend & binary(1) \\
+            \hline
+            \multicolumn{2}{c}{Keywords}\\
+            \hline
+            Number of keywords in the metadata & numeric(1) \\
+            Data channel (Lifestyle, Entertainment, Business, Social Media, Tech or World) & binary(6) \\
+            Worst keyword shares (min, avg, max) & numeric(3) \\
+            Best keyword shares (min, avg, max) & numeric(3) \\
+            Average keyword shares (min, avg, max) & numeric(3) \\
+            \hline
+            \multicolumn{2}{c}{Natural Language Processing}\\
+            \hline
+            Closeness to top LDA topics from 1 to 5 & numeric(5) \\
+            Text subjectivity & numeric(1) \\
+            Text sentiment polarity & numeric(1) \\
+            Rate of positive words in the content & numeric(1) \\
+            Rate of negative words in the content & numeric(1) \\
+            Rate of positive words among non-neutral tokens & numeric(1) \\
+            Rate of negative words among non-neutral tokens & numeric(1) \\
+            Polarity of positive words (min, avg, max) & numeric(3) \\
+            Polarity of negative words (min, avg, max) & numeric(3) \\
+            Title subjectivity & numeric(1) \\
+            Title polarity & numeric(1) \\
+            Absolute subjectivity level & numeric(1) \\
+            Absolute polarity level & numeric(1) \\
+            \hline\hline
+        \end{tabular}
+        \label{table:1}
+    \end{table}
 
 \end{document}
